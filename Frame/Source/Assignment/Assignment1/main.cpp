@@ -51,8 +51,8 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
     // TODO: Implement this function
     // Create the projection matrix for the given parameters.
     // Then return it.
-    projectionmove << 1, 0, 0, -height / 2,
-        0, 1, 0, -width / 2,
+    projectionmove << 1, 0, 0, 0,
+        0, 1, 0, 0,
         0, 0, 1, -(zNear + zFar) / 2,
 		0, 0, 0, 1;
 
