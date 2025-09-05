@@ -27,6 +27,11 @@ Eigen::Matrix4f get_model_matrix(float rotation_angle)
     // Create the model matrix for rotating the triangle around the Z axis.
     // Then return it.
 
+    model << cos(rotation_angle / 180 * MY_PI), -sin(rotation_angle / 180 * MY_PI), 0, 0,
+        sin(rotation_angle / 180 * MY_PI), cos(rotation_angle * MY_PI), 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1;
+
     return model;
 }
 
@@ -41,7 +46,41 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
     // Create the projection matrix for the given parameters.
     // Then return it.
 
+    projection << zNear, 0, 0, 0,
+        0, zNear, 0, 0,
+        0, 0, zNear + zFar, -zNear * zFar,
+        0, 0, 1, 0;
+
     return projection;
+}
+
+Eigen::Matrix4f get_rotation(Vector3f axis, float angle)
+{
+    Eigen::Matrix4f rotationToAxis = Eigen::Matrix4f::Identity();
+    Eigen::Matrix4f rotationback = Eigen::Matrix4f::Identity();
+    Eigen::Matrix4f rotation_angle = Eigen::Matrix4f::Identity();
+
+    Eigen::Matrix4f rotation = Eigen::Matrix4f::Identity();
+
+    float a = axis[0];
+    float b = axis[1];
+    float c = axis[2];
+
+    rotationToAxis << -b / (sqrt(a * a + b * b)), a / (sqrt(a * a + b * b)), 0, 0,
+        -c / (sqrt(a * a + c * c)), 0, a / (sqrt(a * a + c * c)), 0,
+        a / (sqrt(a * a + b * b + c * c)), b / (sqrt(a * a + b * b + c * c)), c / (sqrt(a * a + b * b + c * c)), 0,
+        0, 0, 0, 1;
+
+    rotationback = rotationToAxis.inverse();
+
+    rotation_angle << cos(angle / 180 * MY_PI), -sin(angle / 180 * MY_PI), 0, 0,
+        sin(angle / 180 * MY_PI), cos(angle / 180 * MY_PI), 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1;
+
+    rotation = rotationback * rotation_angle * rotationToAxis;
+
+    return rotation;
 }
 
 int main(int argc, const char** argv)
